@@ -1,0 +1,35 @@
+version: '2.1'
+
+services:
+  app:
+    build:
+      context: ./
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - SLS_DEBUG=true
+    ports:
+      - "3000:3000"
+    links:
+      - localstack
+      - mysqld
+#      - memcached
+
+  localstack:
+    image: localstack/localstack
+    environment:
+      - SERVICES=kinesis,sns,dynamodb,s3
+      - DATA_DIR=/tmp/localstack/data
+
+  mysqld:
+    image: mysql:5.7
+    command: ['--sql-mode', 'NO_ENGINE_SUBSTITUTION']
+    environment:
+      - MYSQL_ROOT_PASSWORD=some_strong_password
+      - MYSQL_DATABASE=foosball
+      - MYSQL_USER=foosball_user
+      - MYSQL_PASSWORD=ksVN4jws8uB5wqRY
+#
+#  memcached:
+#    image: memcached:latest

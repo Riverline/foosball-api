@@ -1,0 +1,15 @@
+{
+    "type": "mysql",
+    "host": "mysqld",
+    "port": 3306,
+    "username": "foosball_user",
+    "password": "ksVN4jws8uB5wqRY",
+    "database": "foosball",
+    "entities": [
+        "src/API/Domain/Entity/*.entity{.ts,.js}"
+    ],
+    "migrations": ["migrations/*.js"],
+    "cli": {
+        "migrationsDir": "migrations"
+    }
+}
