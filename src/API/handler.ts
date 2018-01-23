@@ -4,8 +4,12 @@ const { createServer, proxy } = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 
 import * as express from "express";
-import {ValidationPipe} from "@nestjs/common";
+import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
+// import {ValidationPipe} from "@nestjs/common";
 import {ApplicationModule} from "./Application/Modules/ApplicationModule";
+
+console.log(process.env);
 
 export async function bootstrap() {
     const app = new express();
@@ -21,6 +25,11 @@ export async function bootstrap() {
 const getApp = bootstrap()
     .then(app => {
         app.use(awsServerlessExpressMiddleware.eventContext());
+
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: false }));
+        app.use(cors());
+
         return app;
     })
     .then(createServer)

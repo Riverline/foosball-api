@@ -1,26 +1,51 @@
-import {Controller, Get, HttpCode, Inject, Post} from '@nestjs/common';
-import {Player} from "../../Domain/Entity/Player.entity";
-import { Repository } from 'typeorm';
+import {BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Inject, NotFoundException, Param, Post, Response} from '@nestjs/common';
+import {isNullOrUndefined} from "util";
+import {CreatePlayerDto} from "./Dto/CreatePlayerDto";
+import {CommandBus} from "@nestjs/cqrs";
+import {CreatePlayerCommand} from "../../Domain/Command/CreatePlayerCommand";
+import {PlayerRepositoryInterface} from "../../Domain/Repository/PlayerRepositoryInterface";
 
 @Controller('players')
 export class PlayersController {
 
-    constructor(@Inject('PlayerRepositoryToken') private readonly playerRepository: Repository<Player>) {}
+    constructor(
+        @Inject('PlayerRepositoryToken') private readonly playerRepository: PlayerRepositoryInterface,
+        private readonly commandBus: CommandBus
+    ) {}
 
-    @HttpCode(201)
+    @HttpCode(HttpStatus.CREATED)
     @Post()
-    create() {
+    public async createUser(@Body() createPlayerDto: CreatePlayerDto) {
+        console.log(createPlayerDto);
 
+        // @TODO : revamp validation
+        if (isNullOrUndefined(createPlayerDto.firstname) || isNullOrUndefined(createPlayerDto.lastname)) {
+            throw new BadRequestException();
+        }
+
+        let player = await this.commandBus.execute(
+            new CreatePlayerCommand(createPlayerDto.firstname, createPlayerDto.lastname),
+        );
+
+        console.log(player);
+
+        return player;
     }
 
     @Get(':id')
-    async getOne(): Promise<any> {
-        return {};
+    async getOne(@Param('id') id): Promise<any> {
+        let player = await this.playerRepository.getById(id);
+
+        if (isNullOrUndefined(player)) {
+            throw new NotFoundException();
+        }
+
+        return player;
     }
 
     @Get()
-    async list(): Promise<any[]> {;
-        return await this.playerRepository.find();
+    async list(): Promise<any[]> {
+        return await this.playerRepository.getAll();
     }
 
 }

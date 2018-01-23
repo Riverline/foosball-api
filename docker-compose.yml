@@ -11,6 +11,9 @@ services:
       - SLS_DEBUG=true
     ports:
       - "3000:3000"
+    depends_on:
+      mysqld:
+        condition: service_healthy
     links:
       - localstack
       - mysqld
@@ -19,8 +22,14 @@ services:
   localstack:
     image: localstack/localstack
     environment:
-      - SERVICES=kinesis,sns,dynamodb,s3
-      - DATA_DIR=/tmp/localstack/data
+#      - SERVICES=kinesis,sns,dynamodb,s3
+#      - DATA_DIR=/tmp/localstack/data
+      - PORT_WEB_UI=8090
+#      - HOSTNAME_EXTERNAL=localstack
+#      - HOSTNAME=localstack
+    ports:
+      - "4567-4582:4567-4582"
+      - "8090:8090"
 
   mysqld:
     image: mysql:5.7
@@ -30,6 +39,18 @@ services:
       - MYSQL_DATABASE=foosball
       - MYSQL_USER=foosball_user
       - MYSQL_PASSWORD=ksVN4jws8uB5wqRY
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=some_strong_password --execute \"SHOW DATABASES;\""
+      interval: 3s
+      timeout: 1s
+      retries: 10
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
 #
 #  memcached:
 #    image: memcached:latest

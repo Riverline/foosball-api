@@ -2,7 +2,7 @@
 **WARNING : WORK IN PROGRESS SIDE PROJECT**
 
 
-## TypeORM
+## TypeORM (SQL)
 
 Sync Mysql schema (Docker)
 
@@ -17,8 +17,30 @@ Run a migration (Docker)
 
     docker-compose exec app ts-node ./node_modules/.bin/typeorm migrations:run -f config/ormconfig -c default
 
+## DynamoDB
+
+## Create and populate DynamoDB tables
+
+    serverless dynamodb migrate
+    serverless dynamodb seed --seed=dev
+
 ## Tests
     
-Run tests
+Run tests (on Docker)
 
     docker-compose exec app ./node_modules/.bin/mocha -r ts-node/register tests/**/*.ts
+    docker-compose exec app yarn test:test
+    
+    
+##
+## TODO
+##
+
+[] Centralize SQL/configuration (serverless plugin to export env vars from yml into lambda)
+[] Configuration by env
+[] Fixtures by env (test)
+[] Integrate in Gitlab
+
+[X] Model interfaces
+[X] TypeORM repository
+[] DynamoDB implementation

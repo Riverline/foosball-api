@@ -8,5 +8,6 @@
     "src/**/*.spec.ts"
   ],
   "exec": "ts-node ./bin/server",
+  "legacyWatch": true,
   "delay": "2500"
 }

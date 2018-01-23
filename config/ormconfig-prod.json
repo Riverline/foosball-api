@@ -1,6 +1,6 @@
 {
     "type": "mysql",
-    "host": "mysqld",
+    "host": "sql1.cnl8tezdzsvh.eu-west-1.rds.amazonaws.com",
     "port": 3306,
     "username": "foosball_user",
     "password": "ksVN4jws8uB5wqRY",
